@@ -1,38 +1,46 @@
-Pipeline {
-     agent any
-     tools{
-            gradle 'Gradle'
-            jdk 'JDK'
+pipeline {
+    agent any  // Use any available agent
+
+    tools {
+        gradle 'Gradle'  // Ensure this matches the name configured in Jenkins
+        jdk 'JDK'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'https://github.com/Hemavathipcse/GradleJenkinsPipeline.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'gradle build'  // Run Maven build
+            }
+        }
+
+       stage('Test') {
+           steps {
+               sh 'gradle test'  // Run unit tests
            }
-     stages{
-        stage('Checkout'){
-                steps{
-                       git branch:'master' , url:'https://github.com/keerthi-droi/Gradle1.git'
-              }
-           }
-            stage('Build'){
-                steps{
-                       sh'gradle build'
-              }
-           }
-            stage('Test'){
-                steps{
-                       sh'gradle test'
-              }
-           }
-            stage('Run Application'){
-                steps{
-                       sh'gradle run'
-              }
-           }
-       }
-       
-     post{
-        success{
+        }
+
+              
+        stage('Run Application') {
+            steps {
+                // Start the JAR application
+                sh 'gradle run'
+            }
+        }
+
+        
+    }
+
+    post {
+          success{
                  echo'Build and deployment successful!' 
                 }
         failure{
                  echo'Build failed!'
                 }
         }
-  }    
+  }   
